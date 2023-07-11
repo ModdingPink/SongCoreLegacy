@@ -137,10 +137,10 @@ namespace SongCore
                 _customLevelLoader = Resources.FindObjectsOfTypeAll<CustomLevelLoader>().FirstOrDefault();
                 if (_customLevelLoader)
                 {
-                    defaultCoverImage = _customLevelLoader._defaultPackCover;
+                    defaultCoverImage = _customLevelLoader.GetField<Sprite, CustomLevelLoader>("_defaultPackCover");
 
-                    cachedMediaAsyncLoaderSO = _customLevelLoader._cachedMediaAsyncLoader;
-                    beatmapCharacteristicCollection = _customLevelLoader._beatmapCharacteristicCollection;
+                    cachedMediaAsyncLoaderSO = _customLevelLoader.GetField<CachedMediaAsyncLoader, CustomLevelLoader>("_cachedMediaAsyncLoader");
+                    beatmapCharacteristicCollection = _customLevelLoader.GetField<BeatmapCharacteristicCollectionSO, CustomLevelLoader>("_beatmapCharacteristicCollection");
                 }
                 else
                 {
@@ -187,7 +187,7 @@ namespace SongCore
                 }
             }
 
-            BeatmapLevelsModelSO._customLevelPackCollection = CustomBeatmapLevelPackCollectionSO;
+            BeatmapLevelsModelSO.SetField("_customLevelPackCollection", CustomBeatmapLevelPackCollectionSO as IBeatmapLevelPackCollection);
             await UnityMainThreadTaskScheduler.Factory.StartNew(() =>
             {
                 BeatmapLevelsModelSO.UpdateAllLoadedBeatmapLevelPacks();

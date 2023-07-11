@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 using SongCore.Utilities;
+using IPA.Utilities;
 
 namespace SongCore.HarmonyPatches
 {
@@ -205,7 +206,7 @@ namespace SongCore.HarmonyPatches
                 if (____beatmapCharacteristicSegmentedControlController.selectedBeatmapCharacteristic.serializedName != songData._defaultCharacteristic)
                 {
                     var chars =
-                        ____beatmapCharacteristicSegmentedControlController._beatmapCharacteristics;
+                        ____beatmapCharacteristicSegmentedControlController.GetField<List<BeatmapCharacteristicSO>, BeatmapCharacteristicSegmentedControlController>("_beatmapCharacteristics");
                     var index = 0;
                     foreach (var characteristic in chars)
                     {
@@ -219,10 +220,10 @@ namespace SongCore.HarmonyPatches
 
                     if (index != chars.Count)
                     {
-                        ____beatmapCharacteristicSegmentedControlController._segmentedControl
+                        ____beatmapCharacteristicSegmentedControlController.GetField<HMUI.IconSegmentedControl, BeatmapCharacteristicSegmentedControlController>("_segmentedControl")
                             .SelectCellWithNumber(index);
                         ____beatmapCharacteristicSegmentedControlController.HandleDifficultySegmentedControlDidSelectCell(
-                            ____beatmapCharacteristicSegmentedControlController._segmentedControl, index);
+                            ____beatmapCharacteristicSegmentedControlController.GetField<HMUI.IconSegmentedControl, BeatmapCharacteristicSegmentedControlController>("_segmentedControl"), index);
                     }
                 }
             }
