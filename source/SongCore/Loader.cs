@@ -57,7 +57,7 @@ namespace SongCore
             {
                 if (_beatmapLevelsModel == null)
                 {
-                    _beatmapLevelsModel = FindObjectOfType<BeatmapLevelsModel>();
+                    _beatmapLevelsModel = Resources.FindObjectsOfTypeAll<BeatmapLevelsModel>().FirstOrDefault();
                 }
 
                 return _beatmapLevelsModel;
@@ -134,10 +134,20 @@ namespace SongCore
             BS_Utils.Gameplay.Gamemode.Init();
             if (_customLevelLoader == null)
             {
-                _customLevelLoader = FindObjectOfType<CustomLevelLoader>();
-                defaultCoverImage = _customLevelLoader._defaultPackCover;
-                cachedMediaAsyncLoaderSO = _customLevelLoader._cachedMediaAsyncLoader;
-                beatmapCharacteristicCollection = _customLevelLoader._beatmapCharacteristicCollection;
+                _customLevelLoader = Resources.FindObjectsOfTypeAll<CustomLevelLoader>().FirstOrDefault();
+                if (_customLevelLoader)
+                {
+                    defaultCoverImage = _customLevelLoader._defaultPackCover;
+
+                    cachedMediaAsyncLoaderSO = _customLevelLoader._cachedMediaAsyncLoader;
+                    beatmapCharacteristicCollection = _customLevelLoader._beatmapCharacteristicCollection;
+                }
+                else
+                {
+                    Texture2D defaultCoverTex = Texture2D.blackTexture;
+                    defaultCoverImage = Sprite.Create(defaultCoverTex, new Rect(0f, 0f,
+                        defaultCoverTex.width, defaultCoverTex.height), new Vector2(0.5f, 0.5f));
+                }
             }
         }
 
@@ -182,7 +192,7 @@ namespace SongCore
             {
                 BeatmapLevelsModelSO.UpdateAllLoadedBeatmapLevelPacks();
                 BeatmapLevelsModelSO.UpdateLoadedPreviewLevels();
-                var filterNav = FindObjectOfType<LevelFilteringNavigationController>();
+                var filterNav = Resources.FindObjectsOfTypeAll<LevelFilteringNavigationController>().FirstOrDefault();
                 if (filterNav != null && filterNav.isActiveAndEnabled)
                 {
                     filterNav.UpdateCustomSongs();
