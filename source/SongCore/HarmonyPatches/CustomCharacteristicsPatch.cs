@@ -3,8 +3,8 @@ using System.Linq;
 
 namespace SongCore.HarmonyPatches
 {
-    [HarmonyPatch(typeof(BeatmapCharacteristicCollection))]
-    [HarmonyPatch(nameof(BeatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName), MethodType.Normal)]
+    [HarmonyPatch(typeof(BeatmapCharacteristicCollectionSO))]
+    [HarmonyPatch(nameof(BeatmapCharacteristicCollectionSO.GetBeatmapCharacteristicBySerializedName), MethodType.Normal)]
     internal class CustomCharacteristicsPatch
     {
         //      public static OverrideClasses.CustomLevel previouslySelectedSong = null;

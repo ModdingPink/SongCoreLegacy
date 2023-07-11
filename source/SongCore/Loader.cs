@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using IPA.Utilities;
 using IPA.Utilities.Async;
 using SongCore.Data;
 using SongCore.OverrideClasses;
@@ -66,7 +67,7 @@ namespace SongCore
         internal static BeatmapLevelsModel _beatmapLevelsModel;
         public static Sprite defaultCoverImage;
         public static CachedMediaAsyncLoader cachedMediaAsyncLoaderSO { get; private set; }
-        public static BeatmapCharacteristicCollection beatmapCharacteristicCollection { get; private set; }
+        public static BeatmapCharacteristicCollectionSO beatmapCharacteristicCollection { get; private set; }
 
         public static Loader Instance;
 
@@ -839,47 +840,10 @@ namespace SongCore
                     beatmapsets[i] = new PreviewDifficultyBeatmapSet(beatmapCharacteristicBySerializedName, array);
                 }
 
-                var overrideColorSchemes = Array.Empty<ColorScheme?>();
-                if (saveData.colorSchemes != null)
-                {
-                    overrideColorSchemes = new ColorScheme[saveData.colorSchemes.Length];
-                    for (var i = 0; i < saveData.colorSchemes.Length; i++)
-                    {
-                        BeatmapLevelColorSchemeSaveData colorSchemeSaveData = saveData.colorSchemes[i];
-                        if (colorSchemeSaveData.useOverride)
-                        {
-                            var colorSchemeId = colorSchemeSaveData.colorScheme.colorSchemeId;
-                            var saberAColor = colorSchemeSaveData.colorScheme.saberAColor;
-                            var saberBColor = colorSchemeSaveData.colorScheme.saberBColor;
-                            var environmentColor0 = colorSchemeSaveData.colorScheme.environmentColor0;
-                            var environmentColor1 = colorSchemeSaveData.colorScheme.environmentColor1;
-                            var environmentColor0Boost = colorSchemeSaveData.colorScheme.environmentColor0Boost;
-                            var environmentColor1Boost = colorSchemeSaveData.colorScheme.environmentColor1Boost;
-                            var obstaclesColor = colorSchemeSaveData.colorScheme.obstaclesColor;
-                            overrideColorSchemes[i] = new ColorScheme(colorSchemeId, colorSchemeId, true, colorSchemeId, false,
-                                saberAColor, saberBColor, environmentColor0, environmentColor1,true, environmentColor0Boost, environmentColor1Boost, obstaclesColor);
-                        }
-                        else
-                        {
-                            overrideColorSchemes[i] = null;
-                        }
-                    }
-                }
-
-                var environmentInfos = Array.Empty<EnvironmentInfoSO>();
-                if (saveData.environmentNames != null)
-                {
-                    environmentInfos = new EnvironmentInfoSO[saveData.environmentNames.Length];
-                    for (var i = 0; i < saveData.environmentNames.Length; i++)
-                    {
-                        environmentInfos[i] = _customLevelLoader._environmentSceneInfoCollection.GetEnvironmentInfoBySerializedName(saveData.environmentNames[i]);
-                    }
-                }
-
                 result = new CustomPreviewBeatmapLevel(defaultCoverImage, saveData, songPath,
                     cachedMediaAsyncLoaderSO, levelID, songName, songSubName,
-                    songAuthorName, levelAuthorName, beatsPerMinute, songTimeOffset, shuffle, shufflePeriod, previewStartTime, previewDuration,
-                    environmentSceneInfo, allDirectionEnvironmentInfo, environmentInfos, overrideColorSchemes, beatmapsets);
+                    songAuthorName, levelAuthorName, beatsPerMinute, songTimeOffset, shuffle, shufflePeriod,
+                    previewStartTime, previewDuration, environmentSceneInfo, allDirectionEnvironmentInfo, beatmapsets);
 
                 GetSongDuration(result, songPath, Path.Combine(songPath, saveData.songFilename));
             }
@@ -1004,26 +968,18 @@ namespace SongCore
                             continue;
                         }
 
-                        UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+                        HMMainThreadDispatcher.instance.Enqueue(() =>
                         {
-                            try
+                            if (_loadingCancelled)
                             {
-                                if (_loadingCancelled)
-                                {
-                                    return;
-                                }
-
-                                var level = LoadSong(songData.SaveData, songPath, out var hash, folderEntry);
-                                if (level != null)
-                                {
-                                    beatmapDictionary[songPath] = level;
-                                    Collections.AddExtraSongData(hash, songPath, songData.RawSongData);
-                                }
+                                return;
                             }
-                            catch (Exception ex)
+
+                            var level = LoadSong(songData.SaveData, songPath, out var hash, folderEntry);
+                            if (level != null)
                             {
-                                Logging.Logger.Notice($"Failed to load song from {cachedFolder}:");
-                                Logging.Logger.Notice(ex);
+                                beatmapDictionary[songPath] = level;
+                                Collections.AddExtraSongData(hash, songPath, songData.RawSongData);
                             }
                         });
                     }
