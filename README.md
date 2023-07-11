@@ -1,5 +1,6 @@
-# SongCore
-A plugin for handling custom song additions in Beat Saber.
+# SongCoreLegacy
+This is a backport of the changes up to the 1.29.4 update of SongCore along with a port of the latest updates 'Legacy' characteristic and custom colours for use in older game versions for those who are unable to play on the latest due to broken controller bindings
+'A plugin for handling custom song additions in Beat Saber.'
 ## Configuration
 - The Settings for SongCore can be found in the `UserData/SongCore` Folder, or in game in the Mod Settings section of the main menu
 ## Installing Custom Songs
