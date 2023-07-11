@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net472</TargetFramework>
@@ -20,10 +20,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Reference Include="Tweening">
-            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
         <Reference Include="Unity.TextMeshPro">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.TextMeshPro.dll</HintPath>
             <Private>False</Private>
@@ -121,10 +117,4 @@
         <EmbeddedResource Include="UI\*.bsml" />
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="BeatSaberModdingTools.Tasks" Version="2.0.0-beta7">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
 </Project>
