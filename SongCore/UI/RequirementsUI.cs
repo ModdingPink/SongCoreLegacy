@@ -1,14 +1,14 @@
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
+using HMUI;
 using SongCore.Utilities;
-using System.Linq;
-using System.Reflection;
+using Tweening;
 using UnityEngine;
 using static BeatSaberMarkupLanguage.Components.CustomListTableData;
-using HMUI;
-using Tweening;
 
 namespace SongCore.UI
 {
@@ -192,6 +192,29 @@ namespace SongCore.UI
                 {
                     customListTableData.data.Add(new CustomCellInfo($"<size=75%>Custom Colors Available", $"Click here to preview & enable or disable it.", ColorsIcon));
                 }
+
+                if (diffData._environmentNameIdx != null)
+                {
+                    var environmentName = songData._environmentNames.ElementAtOrDefault(diffData._environmentNameIdx.Value);
+                    if (environmentName != null)
+                    {
+                        if (environmentName != level.environmentInfo.serializedName)
+                        {
+                            customListTableData.data.Add(new CustomCellInfo("<size=75%>Environment Override", $"This overrides to: {environmentName}", InfoIcon));
+                        }
+                    }
+                }
+
+                /*
+                if (diffData._beatmapColorSchemeIdx != null && songData._colorSchemes != null)
+                {
+                    var colorScheme = songData._colorSchemes.ElementAtOrDefault(diffData._beatmapColorSchemeIdx.Value);
+                    if (colorScheme != null)
+                    {
+                        customListTableData.data.Add(new CustomCellInfo($"<size=75%>{ colorScheme.saberAColor.r }", $"Click here to preview & enable or disable it.", ColorsIcon));
+                    }
+                }*/
+
 
                 if (diffData.additionalDifficultyData._warnings.Length > 0)
                 {

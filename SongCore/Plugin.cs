@@ -75,7 +75,7 @@ namespace SongCore
             BS_Utils.Utilities.BSEvents.levelSelected += BSEvents_levelSelected;
             BS_Utils.Utilities.BSEvents.lateMenuSceneLoadedFresh += BSEvents_menuSceneLoadedFresh;
 
-            if (!File.Exists(Collections.DataPath))
+            if (!File.Exists(Collections.DataPath)) 
             {
                 File.Create(Collections.DataPath);
             }
@@ -87,6 +87,7 @@ namespace SongCore
             Collections.RegisterCustomCharacteristic(BasicUI.MissingCharIcon!, "Missing Characteristic", "Missing Characteristic", "MissingCharacteristic", "MissingCharacteristic", false, false, 1000);
             Collections.RegisterCustomCharacteristic(BasicUI.LightshowIcon!, "Lightshow", "Lightshow", "Lightshow", "Lightshow", false, false, 100);
             Collections.RegisterCustomCharacteristic(BasicUI.ExtraDiffsIcon!, "Lawless", "Lawless - Anything Goes", "Lawless", "Lawless", false, false, 101);
+            Collections.RegisterCustomCharacteristic(BasicUI.LegacyIcon!, "Legacy", "Legacy", "Legacy", "Legacy", false, false, 2);
 
             var foldersXmlFilePath = Path.Combine(UnityGame.UserDataPath, nameof(SongCore), "folders.xml");
             if (!File.Exists(foldersXmlFilePath))

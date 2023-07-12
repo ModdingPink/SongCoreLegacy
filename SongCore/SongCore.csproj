@@ -110,11 +110,30 @@
         <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
         <None Include="SongCore.csproj.user" Condition="Exists('SongCore.csproj.user')" />
     </ItemGroup>
+	
+  <ItemGroup>
+	<PackageReference Include="BeatSaberModdingTools.Tasks">
+	  <Version>2.0.0-beta1</Version>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  <PrivateAssets>all</PrivateAssets>
+	</PackageReference>
+  </ItemGroup>
+	
 
     <ItemGroup>
         <EmbeddedResource Include="Data\folders.xml" />
         <EmbeddedResource Include="Icons\*.png" />
         <EmbeddedResource Include="UI\*.bsml" />
+    </ItemGroup>
+	
+
+    <ItemGroup>
+      <None Remove="manifest.json" />
+    </ItemGroup>
+	
+
+    <ItemGroup>
+      <EmbeddedResource Include="manifest.json" />
     </ItemGroup>
 
 </Project>

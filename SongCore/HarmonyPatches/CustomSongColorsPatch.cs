@@ -63,6 +63,8 @@ namespace SongCore.HarmonyPatches
                 return;
             }
 
+
+
             var environmentInfoSO = difficultyBeatmap.GetEnvironmentInfo();
             var fallbackScheme = overrideColorScheme ?? new ColorScheme(environmentInfoSO.colorScheme);
 
