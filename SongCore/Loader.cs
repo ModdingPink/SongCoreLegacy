@@ -40,7 +40,6 @@ namespace SongCore
         private static readonly ConcurrentDictionary<string, OfficialSongEntry> OfficialSongs = new ConcurrentDictionary<string, OfficialSongEntry>();
 
         private static readonly ConcurrentDictionary<string, CustomPreviewBeatmapLevel> CustomLevelsById = new ConcurrentDictionary<string, CustomPreviewBeatmapLevel>();
-
         public static bool AreSongsLoaded { get; private set; }
         public static bool AreSongsLoading { get; private set; }
         public static float LoadingProgress { get; internal set; }

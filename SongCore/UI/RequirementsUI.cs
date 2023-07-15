@@ -16,6 +16,7 @@ namespace SongCore.UI
     {
         private const string BUTTON_BSML = "<bg id='root'><action-button id='info-button' text='?' active='~button-glow' interactable='~button-interactable' anchor-pos-x='31' anchor-pos-y='0' pref-width='12' pref-height='9' on-click='button-click'/></bg>";
         private StandardLevelDetailViewController standardLevel;
+        private CustomLevelLoader loader;
         private TweeningManager tweenyManager;
         private ImageView buttonBG;
         private Color originalColor0;
@@ -80,6 +81,7 @@ namespace SongCore.UI
             GetIcons();
             standardLevel = Resources.FindObjectsOfTypeAll<StandardLevelDetailViewController>().First();
             tweenyManager = Resources.FindObjectsOfTypeAll<TweeningManager>().First();
+            loader = Resources.FindObjectsOfTypeAll<CustomLevelLoader>().FirstOrDefault();
             BSMLParser.instance.Parse(BUTTON_BSML, standardLevel.transform.Find("LevelDetail").gameObject, this);
 
             infoButtonTransform.localScale *= 0.7f; //no scale property in bsml as of now so manually scaling it
@@ -195,11 +197,12 @@ namespace SongCore.UI
 
                 if (diffData._environmentNameIdx != null)
                 {
-                    var environmentName = songData._environmentNames.ElementAtOrDefault(diffData._environmentNameIdx.Value);
-                    if (environmentName != null)
+                    var environmentInfoName = songData._environmentNames.ElementAtOrDefault(diffData._environmentNameIdx.Value);
+                    if (environmentInfoName != null)
                     {
-                        if (environmentName != level.environmentInfo.serializedName)
+                        if (environmentInfoName != level.environmentInfo.serializedName)
                         {
+                            var environmentName = loader.LoadEnvironmentInfo(environmentInfoName, false).environmentName;
                             customListTableData.data.Add(new CustomCellInfo("<size=75%>Environment Override", $"This overrides to: {environmentName}", InfoIcon));
                         }
                     }
