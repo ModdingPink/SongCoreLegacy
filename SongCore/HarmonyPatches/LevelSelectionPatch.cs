@@ -19,7 +19,10 @@ namespace SongCore.HarmonyPatches
             {
                 ____songAuthorText.richText = true;
                 //Get PinkCore'd
-                ____songAuthorText.text = $"<size=80%>{level.songAuthorName}</size> <size=90%>[<color=#ff69b4>{level.levelAuthorName.Replace(@"<", "<\u200B").Replace(@">", ">\u200B")}</color>]</size>";
+
+                string mapperColor = Plugin.Configuration.GreenMapperColor ? "89ff89" : "ff69b4";
+
+                ____songAuthorText.text = $"<size=80%>{level.songAuthorName}</size> <size=90%>[<color=#{mapperColor}>{level.levelAuthorName.Replace(@"<", "<\u200B").Replace(@">", ">\u200B")}</color>]</size>";
             }
         }
     }

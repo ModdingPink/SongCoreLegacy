@@ -84,7 +84,6 @@ namespace SongCore.Data
             //PinkCore Port
             public bool? _oneSaber;
             public bool? _showRotationNoteSpawnLines;
-
             //Tags
             public string[] _styleTags;
         }
@@ -109,7 +108,7 @@ namespace SongCore.Data
 
         [Serializable]
         public class RequirementData
-        {
+        { 
             public string[] _requirements;
             public string[] _suggestions;
             public string[] _warnings;
@@ -365,7 +364,6 @@ namespace SongCore.Data
                             {
                                 styleTags.AddRange(((JArray) tagObj).Select(c => (string) c));
                             }
-
 
                             if (beatmapData.TryGetValue("_difficultyLabel", out var difficultyLabel))
                             {

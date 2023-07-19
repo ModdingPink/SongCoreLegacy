@@ -1,4 +1,4 @@
-﻿using IPA.Utilities;
+using IPA.Utilities;
 
 namespace SongCore.Utilities
 {
@@ -6,6 +6,9 @@ namespace SongCore.Utilities
     {
         internal static readonly FieldAccessor<CustomPreviewBeatmapLevel, float>.Accessor SongDurationAccessor =
             FieldAccessor<CustomPreviewBeatmapLevel, float>.GetAccessor(ToBackingFieldName(nameof(CustomPreviewBeatmapLevel.songDuration)));
+
+        internal static readonly FieldAccessor<CustomPreviewBeatmapLevel, float>.Accessor PreviewDurationAccessor =
+            FieldAccessor<CustomPreviewBeatmapLevel, float>.GetAccessor(ToBackingFieldName(nameof(CustomPreviewBeatmapLevel.previewDuration)));
 
         internal static readonly FieldAccessor<CustomBeatmapLevelPack, IBeatmapLevelCollection>.Accessor BeatmapLevelCollectionAccessor =
             FieldAccessor<CustomBeatmapLevelPack, IBeatmapLevelCollection>.GetAccessor(ToBackingFieldName(nameof(CustomBeatmapLevelPack.beatmapLevelCollection)));

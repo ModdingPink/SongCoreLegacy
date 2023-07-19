@@ -25,6 +25,8 @@ namespace SongCore.HarmonyPatches
         {
             private static bool Prefix()
             {
+                if (Plugin.Configuration.DisableRotationSpawnLinesOverride) return true;
+
                 var beatmap = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.difficultyBeatmap;
                 if (beatmap == null)
                     return true;
@@ -38,52 +40,20 @@ namespace SongCore.HarmonyPatches
         }
 
 
-        [HarmonyPatch(typeof(BeatmapEnvironmentHelper))]
-        [HarmonyPatch(nameof(BeatmapEnvironmentHelper.GetEnvironmentInfo))]
-        internal class StandardLevelScenesTransitionSetupDataSO_Init_Backport
-        {
-            static CustomLevelLoader loader;
-
-            private static bool Prefix(IDifficultyBeatmap difficultyBeatmap, ref EnvironmentInfoSO __result)
-            {
-                if(loader == null)
-                    loader = Resources.FindObjectsOfTypeAll<CustomLevelLoader>().FirstOrDefault();
-
-                var diffBeatmapLevel = difficultyBeatmap.level;
-                var level = diffBeatmapLevel is CustomBeatmapLevel ? diffBeatmapLevel as CustomPreviewBeatmapLevel : null;
-                if (level == null)
-                    return true;
-
-                var songData = Collections.RetrieveExtraSongData(Hashing.GetCustomLevelHash(level));
-                var diffData = Collections.RetrieveDifficultyData(difficultyBeatmap);
-
-                if (songData == null || diffData == null)
-                    return true;
-                if (diffData._environmentNameIdx == null)
-                    return true;
-
-                string? envName = songData._environmentNames.ElementAtOrDefault(diffData._environmentNameIdx.Value);
-                if (envName == null) return true;
-
-                bool rotations = difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.containsRotationEvents;
-
-                __result = loader.LoadEnvironmentInfo(envName, rotations);
-                return false;
-            }
-        }
-
-
-
-
         [HarmonyPatch(typeof(GameplayCoreInstaller))]
         [HarmonyPatch(nameof(GameplayCoreInstaller.InstallBindings))]
         internal class GameplayCoreInstaller_InstallBindingsPatch
         {
             private static ExtraSongData.DifficultyData? diffData = null;
             private static int numberOfColors = -1;
+            private static GameplayCoreSceneSetupData sceneSetupData = null;
             private static void Prefix(GameplayCoreInstaller __instance)
             {
-                GameplayCoreSceneSetupData sceneSetupData = __instance.GetField<GameplayCoreSceneSetupData, GameplayCoreInstaller>("_sceneSetupData");
+                if (Plugin.Configuration.DisableOneSaberOverride)
+                    return;
+
+                sceneSetupData = __instance.GetField<GameplayCoreSceneSetupData, GameplayCoreInstaller>("_sceneSetupData");
+
                 var diffBeatmapLevel = sceneSetupData.difficultyBeatmap.level;
                 var level = diffBeatmapLevel is CustomBeatmapLevel ? diffBeatmapLevel as CustomPreviewBeatmapLevel : null;
                 if (level == null)
@@ -94,21 +64,23 @@ namespace SongCore.HarmonyPatches
                 diffData = Collections.RetrieveDifficultyData(sceneSetupData.difficultyBeatmap);
                 if (diffData == null)
                     return;
-                if (diffData._oneSaber == null)
-                    return;
-
-                numberOfColors = sceneSetupData.difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.numberOfColors;
-                sceneSetupData.difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.SetField("_numberOfColors", diffData._oneSaber.Value == true ? 1 : 2);
+                if (diffData._oneSaber != null && !Plugin.Configuration.DisableOneSaberOverride)
+                {
+                    numberOfColors = sceneSetupData.difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.numberOfColors;
+                    sceneSetupData.difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.SetField("_numberOfColors", diffData._oneSaber.Value == true ? 1 : 2);
+                }
 
             }
-            private static void Postfix(GameplayCoreInstaller __instance) {
+            private static void Postfix(GameplayCoreInstaller __instance) { 
+                if (Plugin.Configuration.DisableOneSaberOverride)
+                    return;
                 if (diffData == null)
                     return;
-                if (diffData._oneSaber == null)
-                    return;
-                GameplayCoreSceneSetupData sceneSetupData = __instance.GetField<GameplayCoreSceneSetupData, GameplayCoreInstaller>("_sceneSetupData");
-                sceneSetupData.difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.SetField("_numberOfColors", numberOfColors);
 
+                if (diffData._oneSaber != null && !Plugin.Configuration.DisableOneSaberOverride)
+                {
+                    sceneSetupData.difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.SetField("_numberOfColors", numberOfColors);
+                }
             }
 
         }
@@ -129,6 +101,8 @@ namespace SongCore.HarmonyPatches
 
                 var songData = Collections.RetrieveExtraSongData(Hashing.GetCustomLevelHash(level));
                 if(songData == null) return;
+                if (songData._characteristicDetails == null) return;
+
 
                 if (songData._characteristicDetails.Length > 0)
                 {
@@ -147,7 +121,7 @@ namespace SongCore.HarmonyPatches
                         {
                             Sprite sprite = Utilities.Utils.LoadSpriteFromFile(Path.Combine(level.customLevelPath, detail._characteristicIconFilePath)) ?? characteristic.icon;
                             string label = detail._characteristicLabel ?? Polyglot.Localization.Get(characteristic.descriptionLocalizationKey);
-                            newDataItems.Add(new IconSegmentedControl.DataItem(sprite, label)); //<---------- THIS 
+                            newDataItems.Add(new IconSegmentedControl.DataItem(sprite, label)); 
                         }
                         else
                         {
