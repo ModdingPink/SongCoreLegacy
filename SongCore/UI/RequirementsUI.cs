@@ -287,7 +287,7 @@ namespace SongCore.UI
                 else if(iconSelected == StandardIcon || iconSelected == OneSaberIcon)
                 {
                     Plugin.Configuration.DisableOneSaberOverride = !Plugin.Configuration.DisableOneSaberOverride;
-                    modal.Hide(false);
+                    modal.Hide(true);
                 }
             }
         }
