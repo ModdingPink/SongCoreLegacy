@@ -8,7 +8,6 @@ namespace SongCore.UI
         private static HoverHintController? hoverHintController = null;
 
         internal static Sprite? MissingCharIcon;
-        internal static Sprite? LegacyIcon;
         internal static Sprite? LightshowIcon;
         internal static Sprite? ExtraDiffsIcon;
         internal static Sprite? WIPIcon;
@@ -19,11 +18,6 @@ namespace SongCore.UI
             if (!MissingCharIcon)
             {
                 MissingCharIcon = Utilities.Utils.LoadSpriteFromResources("SongCore.Icons.MissingChar.png")!;
-            }
-
-            if (!LegacyIcon)
-            {
-                LegacyIcon = Utilities.Utils.LoadSpriteFromResources("SongCore.Icons.LegacyIcon.png")!;
             }
 
             if (!LightshowIcon)

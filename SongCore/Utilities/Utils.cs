@@ -22,7 +22,7 @@ namespace SongCore.Utilities
 
         public static Color ColorFromMapColor(Data.ExtraSongData.MapColor mapColor)
         {
-            return new Color(mapColor.r, mapColor.g, mapColor.b, mapColor.a);
+            return new Color(mapColor.r, mapColor.g, mapColor.b);
         }
 
         public static TEnum ToEnum<TEnum>(this string strEnumValue, TEnum defaultValue)
@@ -42,7 +42,7 @@ namespace SongCore.Utilities
 
         public static string TrimEnd(this string text, string value)
         {
-            return !text.EndsWith(value) ? text : text.Remove(text.LastIndexOf(value, StringComparison.Ordinal));
+            return !text.EndsWith(value, StringComparison.Ordinal) ? text : text.Remove(text.LastIndexOf(value, StringComparison.Ordinal));
         }
 
         public static Sprite? LoadSpriteRaw(byte[] image, float pixelsPerUnit = 100.0f)

@@ -1,10 +1,10 @@
+using System;
 using HarmonyLib;
 using SongCore.UI;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 using SongCore.Utilities;
-using IPA.Utilities;
 
 namespace SongCore.HarmonyPatches
 {
@@ -110,7 +110,7 @@ namespace SongCore.HarmonyPatches
                 }
             }
 
-            if (level.levelID.EndsWith(" WIP"))
+            if (level.levelID.EndsWith(" WIP", StringComparison.Ordinal))
             {
                 RequirementsUI.instance.ButtonGlowColor = true;
                 RequirementsUI.instance.ButtonInteractable = true;
@@ -207,7 +207,7 @@ namespace SongCore.HarmonyPatches
                 if (____beatmapCharacteristicSegmentedControlController.selectedBeatmapCharacteristic.serializedName != songData._defaultCharacteristic)
                 {
                     var chars =
-                        ____beatmapCharacteristicSegmentedControlController.GetField<List<BeatmapCharacteristicSO>, BeatmapCharacteristicSegmentedControlController>("_beatmapCharacteristics");
+                        ____beatmapCharacteristicSegmentedControlController._beatmapCharacteristics;
                     var index = 0;
                     foreach (var characteristic in chars)
                     {
@@ -221,10 +221,10 @@ namespace SongCore.HarmonyPatches
 
                     if (index != chars.Count)
                     {
-                        ____beatmapCharacteristicSegmentedControlController.GetField<HMUI.IconSegmentedControl, BeatmapCharacteristicSegmentedControlController>("_segmentedControl")
+                        ____beatmapCharacteristicSegmentedControlController._segmentedControl
                             .SelectCellWithNumber(index);
                         ____beatmapCharacteristicSegmentedControlController.HandleDifficultySegmentedControlDidSelectCell(
-                            ____beatmapCharacteristicSegmentedControlController.GetField<HMUI.IconSegmentedControl, BeatmapCharacteristicSegmentedControlController>("_segmentedControl"), index);
+                            ____beatmapCharacteristicSegmentedControlController._segmentedControl, index);
                     }
                 }
             }

@@ -20,7 +20,7 @@ namespace SongCore
 
         internal static readonly string DataPath = Path.Combine(UnityGame.UserDataPath, "SongCore", "SongCoreExtraData.dat");
         internal static readonly ConcurrentDictionary<string, string> LevelHashDictionary = new ConcurrentDictionary<string, string>();
-        internal static readonly ConcurrentDictionary<string, List<string>> HashLevelDictionary = new ConcurrentDictionary<string, List<string>>();
+        internal static readonly ConcurrentDictionary<string, List<string>> HashLevelDictionary = new ConcurrentDictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         internal static CustomBeatmapLevelPack? WipLevelPack;
         internal static ConcurrentDictionary<string, ExtraSongData> CustomSongsData = new ConcurrentDictionary<string, ExtraSongData>();
@@ -30,7 +30,7 @@ namespace SongCore
 
         public static bool songWithHashPresent(string hash)
         {
-            return HashLevelDictionary.ContainsKey(hash.ToUpper());
+            return HashLevelDictionary.ContainsKey(hash);
         }
 
         public static string hashForLevelID(string levelID)
@@ -40,7 +40,7 @@ namespace SongCore
 
         public static List<string> levelIDsForHash(string hash)
         {
-            return HashLevelDictionary.TryGetValue(hash.ToUpper(), out var songs) ? songs : new List<string>();
+            return HashLevelDictionary.TryGetValue(hash, out var songs) ? songs : new List<string>();
         }
 
         internal static void AddExtraSongData(string hash, string path, string rawSongData)
@@ -114,14 +114,14 @@ namespace SongCore
         {
             var newChar = ScriptableObject.CreateInstance<BeatmapCharacteristicSO>();
 
-            newChar.SetField("_icon", icon);
-            newChar.SetField("_descriptionLocalizationKey", hintText);
-            newChar.SetField("_serializedName", serializedName);
-            newChar.SetField("_characteristicNameLocalizationKey", characteristicName);
-            newChar.SetField("_compoundIdPartName", compoundIdPartName);
-            newChar.SetField("_requires360Movement", requires360Movement);
-            newChar.SetField("_containsRotationEvents", containsRotationEvents);
-            newChar.SetField("_sortingOrder", sortingOrder);
+            newChar._icon = icon;
+            newChar._descriptionLocalizationKey = hintText;
+            newChar._serializedName= serializedName;
+            newChar._characteristicNameLocalizationKey = characteristicName;
+            newChar._compoundIdPartName = compoundIdPartName;
+            newChar._requires360Movement = requires360Movement;
+            newChar._containsRotationEvents = containsRotationEvents;
+            newChar._sortingOrder = sortingOrder;
 
             if (_customCharacteristics.All(x => x.serializedName != newChar.serializedName))
             {

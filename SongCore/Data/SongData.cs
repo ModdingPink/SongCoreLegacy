@@ -109,7 +109,7 @@ namespace SongCore.Data
 
         [Serializable]
         public class RequirementData
-        { 
+        {
             public string[] _requirements;
             public string[] _suggestions;
             public string[] _warnings;
@@ -215,7 +215,7 @@ namespace SongCore.Data
                         MapColor? _environmentColor1Boost = null;
                         MapColor? _environmentColorW = null;
                         MapColor? _environmentColorWBoost = null;
-                        if (colorSchemeItemData.TryGetValue("useOverride", out var useOverrideVal)) 
+                        if (colorSchemeItemData.TryGetValue("useOverride", out var useOverrideVal))
                         {
                             _useOverride = (bool) useOverrideVal;
                         }
@@ -336,9 +336,9 @@ namespace SongCore.Data
                             environmentNameIdx = (int) environmentNameIdxVal;
                         }
 
-                        
+
                         bool useSongCoreColours = true;
-                        
+
                         if (beatmapColorSchemeIdx != null)
                         {
                             var colorScheme = _colorSchemes.ElementAtOrDefault(beatmapColorSchemeIdx.Value);
@@ -376,7 +376,7 @@ namespace SongCore.Data
                             if (useSongCoreColours)
                             {
                                 //Get difficulty json fields
-                                
+
                                 diffLeft = GetMapColorFromJObject(beatmapData, "_colorLeft");
                                 diffRight = GetMapColorFromJObject(beatmapData, "_colorRight");
                                 diffEnvLeft = GetMapColorFromJObject(beatmapData, "_envColorLeft");
@@ -448,7 +448,7 @@ namespace SongCore.Data
                             _environmentNameIdx = environmentNameIdx,
                             _oneSaber = oneSaber,
                             _showRotationNoteSpawnLines = showRotationNoteSpawnLines,
-                            _styleTags = styleTags.ToArray() 
+                            _styleTags = styleTags.ToArray()
                         });
                     }
                 }

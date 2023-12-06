@@ -5,8 +5,8 @@ using JetBrains.Annotations;
 
 namespace SongCore.HarmonyPatches
 {
-    // This patch fixes the base game implementation, which fails with maps that either have whitespace in their difficulty files
-    // or have no version declared. Without this patch affected maps don't load when selected.
+    // This patch fixes the base game implementation, which fails with maps that have no version declared.
+    // Without this patch affected maps don't load when selected. It is also 100 times faster on average.
     [HarmonyPatch(typeof(BeatmapSaveDataHelpers), nameof(BeatmapSaveDataHelpers.GetVersion))]
     [UsedImplicitly]
     internal static class BeatmapVersionDetectionPatch

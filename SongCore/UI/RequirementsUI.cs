@@ -1,14 +1,15 @@
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
-using HMUI;
 using SongCore.Utilities;
-using Tweening;
+using System.Linq;
+using System.Reflection;
+using BeatSaberMarkupLanguage.Util;
 using UnityEngine;
 using static BeatSaberMarkupLanguage.Components.CustomListTableData;
+using HMUI;
+using Tweening;
 
 namespace SongCore.UI
 {
@@ -16,7 +17,6 @@ namespace SongCore.UI
     {
         private const string BUTTON_BSML = "<bg id='root'><action-button id='info-button' text='?' active='~button-glow' interactable='~button-interactable' anchor-pos-x='31' anchor-pos-y='0' pref-width='12' pref-height='9' on-click='button-click'/></bg>";
         private StandardLevelDetailViewController standardLevel;
-        private CustomLevelLoader loader;
         private TweeningManager tweenyManager;
         private ImageView buttonBG;
         private Color originalColor0;
@@ -84,8 +84,7 @@ namespace SongCore.UI
         {
             GetIcons();
             standardLevel = Resources.FindObjectsOfTypeAll<StandardLevelDetailViewController>().First();
-            tweenyManager = Resources.FindObjectsOfTypeAll<TweeningManager>().First();
-            loader = Resources.FindObjectsOfTypeAll<CustomLevelLoader>().FirstOrDefault();
+            tweenyManager = Object.FindObjectOfType<TweeningManager>();
             BSMLParser.instance.Parse(BUTTON_BSML, standardLevel.transform.Find("LevelDetail").gameObject, this);
 
             infoButtonTransform.localScale *= 0.7f; //no scale property in bsml as of now so manually scaling it
@@ -221,11 +220,11 @@ namespace SongCore.UI
                     {
                         if (environmentInfoName != level.environmentInfo.serializedName)
                         {
-                            environmentName = loader.LoadEnvironmentInfo(environmentInfoName, false).environmentName;
+                            environmentName = Loader._customLevelLoader.LoadEnvironmentInfo(environmentInfoName, false).environmentName;
                         }
                     }
                 }
-                
+
                 if (diffData.additionalDifficultyData._warnings.Length > 0)
                 {
                     foreach (string req in diffData.additionalDifficultyData._warnings)
@@ -280,11 +279,11 @@ namespace SongCore.UI
             if (diffData != null)
             {
                 var iconSelected = customListTableData.data[index].icon;
-                if(iconSelected == ColorsIcon)
+                if (iconSelected == ColorsIcon)
                 {
                     modal.Hide(false, () => ColorsUI.instance.ShowColors(diffData));
                 }
-                else if(iconSelected == StandardIcon || iconSelected == OneSaberIcon)
+                else if (iconSelected == StandardIcon || iconSelected == OneSaberIcon)
                 {
                     Plugin.Configuration.DisableOneSaberOverride = !Plugin.Configuration.DisableOneSaberOverride;
                     modal.Hide(true);

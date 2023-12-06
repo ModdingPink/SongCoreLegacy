@@ -25,7 +25,8 @@ namespace SongCore.HarmonyPatches
         {
             private static bool Prefix()
             {
-                if (Plugin.Configuration.DisableRotationSpawnLinesOverride) return true;
+                if (Plugin.Configuration.DisableRotationSpawnLinesOverride)
+                    return true;
 
                 var beatmap = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.difficultyBeatmap;
                 if (beatmap == null)
@@ -71,7 +72,8 @@ namespace SongCore.HarmonyPatches
                 }
 
             }
-            private static void Postfix(GameplayCoreInstaller __instance) { 
+            private static void Postfix(GameplayCoreInstaller __instance)
+            {
                 if (Plugin.Configuration.DisableOneSaberOverride)
                     return;
                 if (diffData == null)
@@ -93,7 +95,7 @@ namespace SongCore.HarmonyPatches
             //      public static OverrideClasses.CustomLevel previouslySelectedSong = null;
             private static void Postfix(IReadOnlyList<IDifficultyBeatmapSet> difficultyBeatmapSets, BeatmapCharacteristicSO selectedBeatmapCharacteristic, ref List<BeatmapCharacteristicSO> ____beatmapCharacteristics, ref IconSegmentedControl ____segmentedControl)
             {
-                if(!Plugin.Configuration.DisplayCustomCharacteristics || difficultyBeatmapSets == null) return;
+                if (!Plugin.Configuration.DisplayCustomCharacteristics) return;
 
                 var diffBeatmapSetsBeatmaps = difficultyBeatmapSets.FirstOrDefault().difficultyBeatmaps;
                 if (diffBeatmapSetsBeatmaps == null) return;
@@ -129,20 +131,19 @@ namespace SongCore.HarmonyPatches
                             if (detail._characteristicIconFilePath != null)
                                 sprite = Utilities.Utils.LoadSpriteFromFile(Path.Combine(level.customLevelPath, detail._characteristicIconFilePath)) ?? characteristic.icon;
                             string label = detail._characteristicLabel ?? Polyglot.Localization.Get(characteristic.descriptionLocalizationKey);
-                            newDataItems.Add(new IconSegmentedControl.DataItem(sprite, label)); 
+                            newDataItems.Add(new IconSegmentedControl.DataItem(sprite, label));
                         }
                         else
                         {
                             newDataItems.Add(item);
-                        } 
+                        }
 
                         if (characteristic == selectedBeatmapCharacteristic)
-                        {
+                        { 
                             cell = i;
                         }
                         i++;
                     }
-
                     ____segmentedControl.SetData(newDataItems.ToArray());
                     ____segmentedControl.SelectCellWithNumber(cell);
                 }
