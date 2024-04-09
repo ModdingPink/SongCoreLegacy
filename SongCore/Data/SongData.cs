@@ -1,32 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using HarmonyLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SongCore.Utilities;
 using UnityEngine;
-using UnityEngine.UI;
-using static BloomPrePassBackgroundColorsGradientFromColorSchemeColors;
 
 namespace SongCore.Data
 {
-    public class SongData
-    {
-        public string RawSongData;
-        public StandardLevelInfoSaveData SaveData;
-
-        public SongData(string rawSongData, StandardLevelInfoSaveData saveData)
-        {
-            RawSongData = rawSongData;
-            SaveData = saveData;
-        }
-    }
-
     [Serializable]
     public class ExtraSongData
     {

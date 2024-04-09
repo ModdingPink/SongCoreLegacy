@@ -1,4 +1,4 @@
-﻿using SongCore.Data;
+using SongCore.Data;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,8 +13,8 @@ namespace SongCore.Utilities
     {
         internal static ConcurrentDictionary<string, SongHashData> cachedSongHashData = new ConcurrentDictionary<string, SongHashData>();
         internal static ConcurrentDictionary<string, AudioCacheData> cachedAudioData = new ConcurrentDictionary<string, AudioCacheData>();
-        public static readonly string cachedHashDataPath = Path.Combine(IPA.Utilities.UnityGame.InstallPath, "UserData", "SongCore", "SongHashData.dat");
-        public static readonly string cachedAudioDataPath = Path.Combine(IPA.Utilities.UnityGame.InstallPath, "UserData", "SongCore", "SongDurationCache.dat");
+        public static readonly string cachedHashDataPath = Path.Combine(IPA.Utilities.UnityGame.UserDataPath, nameof(SongCore), "SongHashData.dat");
+        public static readonly string cachedAudioDataPath = Path.Combine(IPA.Utilities.UnityGame.UserDataPath, nameof(SongCore), "SongDurationCache.dat");
 
         public static void ReadCachedSongHashes()
         {
@@ -119,19 +119,26 @@ namespace SongCore.Utilities
             return false;
         }
 
-        public static string GetCustomLevelHash(CustomPreviewBeatmapLevel level)
+        public static string GetCustomLevelHash(BeatmapLevel level)
         {
-            return GetCustomLevelHash(level.customLevelPath, level.standardLevelInfoSaveData.difficultyBeatmapSets);
+            var standardLevelInfoSaveData = Collections.GetStandardLevelInfoSaveData(level.levelID);
+            if (standardLevelInfoSaveData == null)
+            {
+                return string.Empty;
+            }
+
+            var customLevelPath = Collections.GetCustomLevelPath(level.levelID);
+            if (string.IsNullOrEmpty(customLevelPath))
+            {
+                return string.Empty;
+            }
+
+            return GetCustomLevelHash(customLevelPath, standardLevelInfoSaveData.difficultyBeatmapSets);
         }
 
         public static string GetCustomLevelHash(StandardLevelInfoSaveData level, string customLevelPath)
         {
             return GetCustomLevelHash(customLevelPath, level.difficultyBeatmapSets);
-        }
-
-        public static string GetCustomLevelHash(CustomBeatmapLevel level)
-        {
-            return GetCustomLevelHash(level.customLevelPath, level.standardLevelInfoSaveData.difficultyBeatmapSets);
         }
 
         private static string GetCustomLevelHash(string levelPath, StandardLevelInfoSaveData.DifficultyBeatmapSet[] beatmapSets)
@@ -142,7 +149,7 @@ namespace SongCore.Utilities
             }
 
             var levelFolder = levelPath + Path.DirectorySeparatorChar;
-            IEnumerable<byte> combinedBytes = File.ReadAllBytes(levelFolder + "info.dat");
+            IEnumerable<byte> combinedBytes = File.ReadAllBytes(levelFolder + CustomLevelPathHelper.kStandardLevelInfoFilename);
 
             foreach(var beatmapSet in beatmapSets)
             {

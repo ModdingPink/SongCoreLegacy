@@ -1,16 +1,22 @@
-﻿using IPA.Utilities;
+using IPA.Utilities;
 
 namespace SongCore.Utilities
 {
     internal static class Accessors
     {
-        internal static readonly FieldAccessor<CustomPreviewBeatmapLevel, float>.Accessor SongDurationAccessor =
-            FieldAccessor<CustomPreviewBeatmapLevel, float>.GetAccessor(ReflectionUtil.ToCompilerGeneratedBackingField(nameof(CustomPreviewBeatmapLevel.songDuration)));
+        public static readonly FieldAccessor<BeatmapLevel, string>.Accessor LevelIDAccessor =
+            FieldAccessor<BeatmapLevel, string>.GetAccessor(nameof(BeatmapLevel.levelID));
 
-        internal static readonly FieldAccessor<CustomPreviewBeatmapLevel, float>.Accessor PreviewDurationAccessor =
-            FieldAccessor<CustomPreviewBeatmapLevel, float>.GetAccessor(ReflectionUtil.ToCompilerGeneratedBackingField(nameof(CustomPreviewBeatmapLevel.previewDuration)));
+        public static readonly FieldAccessor<BeatmapLevel, float>.Accessor SongDurationAccessor =
+            FieldAccessor<BeatmapLevel, float>.GetAccessor(nameof(BeatmapLevel.songDuration));
 
-        internal static readonly FieldAccessor<CustomBeatmapLevelPack, IBeatmapLevelCollection>.Accessor BeatmapLevelCollectionAccessor =
-            FieldAccessor<CustomBeatmapLevelPack, IBeatmapLevelCollection>.GetAccessor(ReflectionUtil.ToCompilerGeneratedBackingField(nameof(CustomBeatmapLevelPack.beatmapLevelCollection)));
+        public static readonly FieldAccessor<BeatmapLevel, float>.Accessor PreviewDurationAccessor =
+            FieldAccessor<BeatmapLevel, float>.GetAccessor(nameof(BeatmapLevel.previewDuration));
+
+        public static readonly FieldAccessor<BeatmapLevelPack, BeatmapLevel[]>.Accessor BeatmapLevelsAccessor =
+            FieldAccessor<BeatmapLevelPack, BeatmapLevel[]>.GetAccessor(nameof(BeatmapLevelPack.beatmapLevels));
+
+        public static readonly FieldAccessor<SaberManager.InitData, bool>.Accessor OneSaberModeAccessor =
+            FieldAccessor<SaberManager.InitData, bool>.GetAccessor(nameof(SaberManager.InitData.oneSaberMode));
     }
 }

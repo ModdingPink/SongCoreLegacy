@@ -1,4 +1,3 @@
-using BeatSaberMarkupLanguage.Settings;
 using HarmonyLib;
 using IPA;
 using SongCore.UI;
@@ -9,29 +8,32 @@ using System.IO;
 using IPA.Config;
 using IPA.Config.Stores;
 using IPA.Loader;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+using SongCore.HarmonyPatches;
+using SiraUtil.Zenject;
+using SongCore.Installers;
 using IPALogger = IPA.Logging.Logger;
-using Object = UnityEngine.Object;
 
 namespace SongCore
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
     public class Plugin
     {
-        private static PluginMetadata _metadata;
-        private static Harmony? _harmony;
+        private readonly PluginMetadata _metadata;
+        private readonly Harmony _harmony;
 
         internal static SConfiguration Configuration { get; private set; }
 
-        public static Action<bool, string, string, IPreviewBeatmapLevel>? CustomSongPlatformSelectionDidChange;
+        public static Action<bool, string, string, BeatmapLevel>? CustomSongPlatformSelectionDidChange;
 
+        [Obsolete]
         public static string standardCharacteristicName = "Standard";
+        [Obsolete]
         public static string oneSaberCharacteristicName = "OneSaber";
+        [Obsolete]
         public static string noArrowsCharacteristicName = "NoArrows";
 
         [Init]
-        public void Init(IPALogger pluginLogger, PluginMetadata metadata)
+        public Plugin(IPALogger pluginLogger, PluginMetadata metadata, Zenjector zenjector)
         {
             // Workaround for creating BSIPA config in Userdata subdir
             Directory.CreateDirectory(Path.Combine(UnityGame.UserDataPath, nameof(SongCore)));
@@ -39,41 +41,24 @@ namespace SongCore
 
             Logging.Logger = pluginLogger;
             _metadata = metadata;
+            _harmony = new Harmony("com.kyle1413.BeatSaber.SongCore");
+
+            zenjector.UseLogger(pluginLogger);
+            zenjector.Install<AppInstaller>(Location.App);
+            zenjector.Install<MenuInstaller>(Location.Menu);
+            zenjector.Install<GameInstaller>(Location.StandardPlayer);
         }
 
         [OnStart]
         public void OnApplicationStart()
         {
-            // TODO: Remove this migration path at some point
-            var songCoreIniPath = Path.Combine(UnityGame.UserDataPath, nameof(SongCore), "SongCore.ini");
-            if (File.Exists(songCoreIniPath))
+            if (typeof(Harmony).Assembly.GetName().Version.Minor < 12)
             {
-                var modPrefs = new BS_Utils.Utilities.Config("SongCore/SongCore");
-
-                Configuration.CustomSongPlatforms = modPrefs.GetBool("SongCore", "customSongPlatforms", true, true);
-                Configuration.DisplayDiffLabels = modPrefs.GetBool("SongCore", "displayDiffLabels", true, true);
-                Configuration.ForceLongPreviews = modPrefs.GetBool("SongCore", "forceLongPreviews", false, true);
-
-                //Delete Old Config
-                try
-                {
-                    File.Delete(songCoreIniPath);
-                }
-                catch
-                {
-                    Logging.Logger.Warn("Failed to delete old config file!");
-                }
+                _harmony.Patch(HarmonyTranspilersFixPatch.TargetMethod(), null, null, new HarmonyMethod(AccessTools.Method(typeof(HarmonyTranspilersFixPatch), nameof(HarmonyTranspilersFixPatch.Transpiler))));
             }
-
-
-            BSMLSettings.instance.AddSettingsMenu("SongCore", "SongCore.UI.settings.bsml", new SCSettingsController());
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
-
-            _harmony = Harmony.CreateAndPatchAll(_metadata.Assembly, "com.kyle1413.BeatSaber.SongCore");
+            _harmony.PatchAll(_metadata.Assembly);
 
             BasicUI.GetIcons();
-            BS_Utils.Utilities.BSEvents.levelSelected += BSEvents_levelSelected;
-            BS_Utils.Utilities.BSEvents.lateMenuSceneLoadedFresh += BSEvents_menuSceneLoadedFresh;
 
             if (!File.Exists(Collections.DataPath))
             {
@@ -96,46 +81,7 @@ namespace SongCore
                 foldersXmlResourceStream!.CopyTo(fileStream);
             }
 
-            Loader.SeperateSongFolders.InsertRange(0, Data.SeperateSongFolder.ReadSeperateFoldersFromFile(foldersXmlFilePath));
-        }
-
-        private void BSEvents_menuSceneLoadedFresh(ScenesTransitionSetupDataSO data)
-        {
-            Loader.OnLoad();
-            RequirementsUI.instance.Setup();
-        }
-
-        private void BSEvents_levelSelected(LevelCollectionViewController arg1, IPreviewBeatmapLevel level)
-        {
-            if (level is CustomPreviewBeatmapLevel customLevel)
-            {
-                var songData = Collections.RetrieveExtraSongData(Hashing.GetCustomLevelHash(customLevel));
-
-                if (songData == null)
-                {
-                    return;
-                }
-
-                if (Configuration.CustomSongPlatforms && !string.IsNullOrWhiteSpace(songData._customEnvironmentName))
-                {
-                    Logging.Logger.Debug("Custom song with platform selected");
-                    CustomSongPlatformSelectionDidChange?.Invoke(true, songData._customEnvironmentName, songData._customEnvironmentHash, customLevel);
-                }
-                else
-                {
-                    CustomSongPlatformSelectionDidChange?.Invoke(false, songData._customEnvironmentName, songData._customEnvironmentHash, customLevel);
-                }
-            }
-        }
-
-        private void OnActiveSceneChanged(Scene prevScene, Scene nextScene)
-        {
-            Object.Destroy(GameObject.Find("SongCore Color Setter"));
-
-            if (nextScene.name == "MenuViewControllers")
-            {
-                BS_Utils.Gameplay.Gamemode.Init();
-            }
+            Loader.SeparateSongFolders.InsertRange(0, Data.SeparateSongFolder.ReadSeparateFoldersFromFile(foldersXmlFilePath));
         }
 
         [OnExit]
