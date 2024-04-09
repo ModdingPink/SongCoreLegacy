@@ -18,11 +18,9 @@ namespace SongCore.HarmonyPatches
             {
                 __instance._songAuthorText.richText = true;
                 //Get PinkCore'd
-
                 string mapperColor = Plugin.Configuration.GreenMapperColor ? "89ff89" : "ff69b4";
 
                 __instance._songAuthorText.text = $"<size=80%>{level.songAuthorName}</size> <size=90%>[<color=#{mapperColor}>{authors.Replace(@"<", "<\u200B").Replace(@">", ">\u200B")}</color>]</size>";
-                __instance._songAuthorText.overflowMode = TMPro.TextOverflowModes.Page;
             }
         }
     }

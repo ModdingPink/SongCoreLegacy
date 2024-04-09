@@ -79,7 +79,6 @@ namespace SongCore
         public static float LoadingProgress { get; private set; }
         public static BeatmapLevelsModel BeatmapLevelsModelSO { get; private set; }
         public static CustomLevelLoader CustomLevelLoader { get; private set; }
-        public static MediaAsyncLoader cachedMediaAsyncLoaderSO { get; private set; }
         public static BeatmapCharacteristicCollection beatmapCharacteristicCollection { get; private set; }
 
         public void Initialize()
@@ -1011,7 +1010,6 @@ namespace SongCore
             }
 
             var json = File.ReadAllText(infoFilePath);
-            Logging.Logger.Info(BeatmapSaveDataHelpers.GetVersion(json).ToString());
             if (BeatmapSaveDataHelpers.GetVersion(json) < BeatmapSaveDataHelpers.version4)
             {
                 var standardLevelInfoSaveData = StandardLevelInfoSaveData.DeserializeFromJSONString(json);
